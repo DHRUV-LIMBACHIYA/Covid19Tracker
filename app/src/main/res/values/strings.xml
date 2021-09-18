@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Covid19Tracker</string>
+    <string name="text_country">Country</string>
+    <string name="text_confirmed">Confirmed</string>
+    <string name="text_recovered">Recovered</string>
+    <string name="text_deaths">Deaths</string>
+    <string name="text_max">Max</string>
+    <string name="text_one_month">1 Month</string>
+    <string name="text_one_week">1 Week</string>
 </resources>

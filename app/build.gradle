@@ -61,4 +61,13 @@ dependencies {
     // Coroutine for Activity,Fragment & ViewModel.
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${rootProject.ext.coroutine_version}"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.ext.coroutine_version}"
+
+    // Spinner
+    implementation 'com.github.arcadefire:nice-spinner:1.4.4'
+
+    // Spark Line Chart
+    implementation 'com.robinhood.spark:spark:1.2.0'
+
+    // Ticker TextView
+    implementation 'com.robinhood.ticker:ticker:2.0.2'
 }
