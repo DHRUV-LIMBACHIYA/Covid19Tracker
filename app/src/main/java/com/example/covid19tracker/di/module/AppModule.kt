@@ -3,6 +3,8 @@ package com.example.covid19tracker.di.module
 import android.util.Log
 import com.example.covid19tracker.Utils.Constants
 import com.example.covid19tracker.network.remote.api.CovidTrackerService
+import com.example.covid19tracker.repository.CovidTrackerRepository
+import com.example.covid19tracker.ui.viewmodel.CovidViewModelFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,4 +48,10 @@ object AppModule {
         addConverterFactory(GsonConverterFactory.create())
         client(okHttpClient)
     }.build().create(CovidTrackerService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideCovidRepository(covidTrackerService: CovidTrackerService) =
+        CovidTrackerRepository(covidTrackerService)
+
 }
