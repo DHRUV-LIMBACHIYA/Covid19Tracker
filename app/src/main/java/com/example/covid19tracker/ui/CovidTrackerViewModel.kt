@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.covid19tracker.Utils.Constants.MAX_DATE
 import com.example.covid19tracker.Utils.ObservableString
 import com.example.covid19tracker.Utils.Resource
 import com.example.covid19tracker.network.remote.response.Countries
@@ -59,7 +60,7 @@ class CovidTrackerViewModel @Inject constructor(
     /**
      * Get Covid Historical data.
      */
-    fun getCovidHistoricalDataFromRepo(countryName: String,fromDate: String,toDate: String) = viewModelScope.launch {
+    fun getCovidHistoricalDataFromRepo(countryName: String,fromDate: String = "",toDate: String = MAX_DATE) = viewModelScope.launch {
         _covidHistoricalData.value = covidTrackerRepository.getCovidDataHistoricalDataFromApi(countryName,fromDate,toDate)
     }
 }

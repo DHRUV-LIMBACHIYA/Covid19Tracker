@@ -6,4 +6,5 @@ package com.example.covid19tracker.Utils
 
 object Constants {
     const val NETWORK_CALL_TIMEOUT = 360
+    const val MAX_DATE = "2020-01-22"
 }

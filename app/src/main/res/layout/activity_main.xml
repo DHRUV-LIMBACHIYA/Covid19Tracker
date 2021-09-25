@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/spinner_country" />
 
-        <org.angmarch.views.NiceSpinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinner_country"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -109,6 +109,7 @@
             <RadioButton
                 android:id="@+id/rd_max"
                 style="@style/RadioButtonStyle"
+                android:checked="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/text_max" />

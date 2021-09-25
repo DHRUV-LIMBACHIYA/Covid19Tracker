@@ -5,6 +5,7 @@ import com.example.covid19tracker.BuildConfig
 import com.example.covid19tracker.Utils.Constants
 import com.example.covid19tracker.network.remote.api.CovidTrackerService
 import com.example.covid19tracker.repository.CovidTrackerRepository
+import com.example.covid19tracker.ui.adapter.CovidTrackerSparkAdapter
 import com.example.covid19tracker.ui.viewmodel.CovidViewModelFactory
 import dagger.Module
 import dagger.Provides
@@ -54,5 +55,9 @@ object AppModule {
     @Provides
     fun provideCovidRepository(covidTrackerService: CovidTrackerService) =
         CovidTrackerRepository(covidTrackerService)
+
+    @Singleton
+    @Provides
+    fun provideCovidSparkAdapter() = CovidTrackerSparkAdapter()
 
 }
