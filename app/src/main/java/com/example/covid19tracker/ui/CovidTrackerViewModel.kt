@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.covid19tracker.Utils.ObservableString
 import com.example.covid19tracker.Utils.Resource
 import com.example.covid19tracker.network.remote.response.Countries
+import com.example.covid19tracker.network.remote.response.CountriesItem
 import com.example.covid19tracker.network.remote.response.CovidData
 import com.example.covid19tracker.repository.CovidTrackerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +27,8 @@ class CovidTrackerViewModel @Inject constructor(
     val observableCountryName = ObservableString()
 
     // LiveData for holding resource of countries.
-    private var _countries = MutableLiveData<Resource<List<Countries>>>()
-    val countries: LiveData<Resource<List<Countries>>> = _countries
+    private var _countries = MutableLiveData<Resource<List<CountriesItem>>>()
+    val countries: LiveData<Resource<List<CountriesItem>>> = _countries
 
     // LiveData for holding resource of covid data.
     private var _covidDataByCountry = MutableLiveData<Resource<List<CovidData>>>()
@@ -36,6 +37,10 @@ class CovidTrackerViewModel @Inject constructor(
     // LiveData for holding resource of covid historical data.
     private var _covidHistoricalData = MutableLiveData<Resource<List<CovidData>>>()
     val covidHistoricalData: LiveData<Resource<List<CovidData>>> = _covidHistoricalData
+
+    init {
+        getAllCountriesFromRepo()
+    }
 
     /**
      * Get all the countries from the repository

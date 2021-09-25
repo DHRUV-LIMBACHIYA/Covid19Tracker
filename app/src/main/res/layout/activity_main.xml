@@ -20,12 +20,12 @@
             android:layout_marginStart="16dp"
             android:text="@string/text_country"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintBottom_toBottomOf="@+id/nice_spinner"
+            app:layout_constraintBottom_toBottomOf="@+id/spinner_country"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/nice_spinner" />
+            app:layout_constraintTop_toTopOf="@+id/spinner_country" />
 
         <org.angmarch.views.NiceSpinner
-            android:id="@+id/nice_spinner"
+            android:id="@+id/spinner_country"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -41,7 +41,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/nice_spinner">
+            app:layout_constraintTop_toBottomOf="@id/spinner_country">
 
             <RadioButton
                 android:id="@+id/rd_confirmed"

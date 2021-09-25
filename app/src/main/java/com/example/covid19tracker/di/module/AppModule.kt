@@ -1,6 +1,7 @@
 package com.example.covid19tracker.di.module
 
 import android.util.Log
+import com.example.covid19tracker.BuildConfig
 import com.example.covid19tracker.Utils.Constants
 import com.example.covid19tracker.network.remote.api.CovidTrackerService
 import com.example.covid19tracker.repository.CovidTrackerRepository
@@ -44,7 +45,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideCovidApi(okHttpClient: OkHttpClient) = Retrofit.Builder().apply {
-        baseUrl("BuildConfig.COVID_BASE_URL")
+        baseUrl(BuildConfig.COVID_BASE_URL)
         addConverterFactory(GsonConverterFactory.create())
         client(okHttpClient)
     }.build().create(CovidTrackerService::class.java)

@@ -3,6 +3,7 @@ package com.example.covid19tracker.repository
 import com.example.covid19tracker.Utils.Resource
 import com.example.covid19tracker.network.remote.api.CovidTrackerService
 import com.example.covid19tracker.network.remote.response.Countries
+import com.example.covid19tracker.network.remote.response.CountriesItem
 import com.example.covid19tracker.network.remote.response.CovidData
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -51,7 +52,7 @@ class CovidTrackerRepository @Inject constructor(
     /**
      * Fetch all the countries from the API.
      */
-    suspend fun getCountriesFromApi(): Resource<List<Countries>> = try {
+    suspend fun getCountriesFromApi(): Resource<List<CountriesItem>> = try {
         val response = covidAPI.getCountries()
         Resource.Success(response)
     } catch (e: Exception) {
