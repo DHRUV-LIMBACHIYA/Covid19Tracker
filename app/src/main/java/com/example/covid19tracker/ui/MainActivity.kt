@@ -1,5 +1,6 @@
 package com.example.covid19tracker.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -9,22 +10,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.covid19tracker.R
 import com.example.covid19tracker.Utils.*
+import com.example.covid19tracker.databinding.ActivityMainBinding
 import com.example.covid19tracker.network.remote.response.CountriesItem
 import com.example.covid19tracker.network.remote.response.CovidData
 import com.example.covid19tracker.ui.adapter.CovidTrackerSparkAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import java.sql.Time
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    var numOfCases: Int = 0
+    private var numOfCases: Int = 0
     lateinit var lastCovidData: CovidData
-    lateinit var mBinding: com.example.covid19tracker.databinding.ActivityMainBinding
+    lateinit var mBinding: ActivityMainBinding
 
     private val mViewModel: CovidTrackerViewModel by viewModels()
 
@@ -34,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        // Assign appropriate color for spark view
+        mBinding.sparkview.lineColor = Color.YELLOW
         observeLiveData()
         eventListeners()
     }
@@ -43,25 +44,32 @@ class MainActivity : AppCompatActivity() {
      */
     private fun eventListeners() {
         mBinding.rgMetricSelection.setOnCheckedChangeListener { radioGroup, id ->
+            var color: Int
             mCovidAdapter.metric = when (id) {
                 R.id.rd_confirmed -> {
                     numOfCases = lastCovidData.Confirmed
+                    color = Color.YELLOW
                     Metric.CONFIRMED
                 }
                 R.id.rd_recoverd -> {
                     numOfCases = lastCovidData.Recovered
+                    color = Color.GREEN
                     Metric.RECOVERED
                 }
                 R.id.rd_deaths -> {
                     numOfCases = lastCovidData.Deaths
+                    color = Color.RED
                     Metric.DEATH
                 }
                 else -> {
                     numOfCases = lastCovidData.Confirmed
+                    color = Color.GREEN
                     Metric.RECOVERED
                 }
             }
 
+            // Assign appropriate color for spark view
+            mBinding.sparkview.lineColor = color
             // Format the covid numbers and display in ticker textview
             mBinding.tickerViewNumbers.text = NumberFormat.getInstance().format(numOfCases)
 
@@ -76,6 +84,24 @@ class MainActivity : AppCompatActivity() {
                 else -> TimeScale.MAX
             }
         }
+
+        mBinding.sparkview.isScrubEnabled = true
+        mBinding.sparkview.setScrubListener { item ->
+            if (item is CovidData) {
+                updateDateAndNumbers(item)
+            }
+        }
+    }
+
+
+    private fun updateDateAndNumbers(item: CovidData) {
+        val numCases = when (mCovidAdapter.metric) {
+            Metric.CONFIRMED -> item.Confirmed
+            Metric.RECOVERED -> item.Recovered
+            Metric.DEATH -> item.Deaths
+        }
+        mBinding.tickerViewNumbers.text = NumberFormat.getInstance().format(numCases)
+        mBinding.tvDate.text = convertDateStringIntoString(item.Date)
     }
 
     private fun updateCovidDataByTimeScale(timescale: TimeScale) {
@@ -83,13 +109,13 @@ class MainActivity : AppCompatActivity() {
             TimeScale.MAX -> mViewModel.getCovidHistoricalDataFromRepo(mViewModel.observableCountryName.trimmed)
             TimeScale.MONTH -> mViewModel.getCovidHistoricalDataFromRepo(
                 mViewModel.observableCountryName.trimmed,
-                fromDate = getCurrentDate(),
-                toDate = getDayAgo(30)
+                fromDate = getDayAgo(30),
+                toDate = getCurrentDate()
             )
             TimeScale.WEEK -> mViewModel.getCovidHistoricalDataFromRepo(
                 mViewModel.observableCountryName.trimmed,
-                fromDate = getCurrentDate(),
-                toDate = getDayAgo(7)
+                fromDate = getDayAgo(7),
+                toDate = getCurrentDate()
             )
         }
     }
@@ -139,9 +165,9 @@ class MainActivity : AppCompatActivity() {
         mBinding.sparkview.adapter = mCovidAdapter
         mCovidAdapter.notifyDataSetChanged()
 
-        if(covidData.isNotEmpty()) {
+        if (covidData.isNotEmpty()) {
             lastCovidData = covidData.last() // Last(Recent) covid data.
-            updateDate(lastCovidData)
+            updateInfo(lastCovidData)
         } else {
             mBinding.tvDate.text = "No record"
         }
@@ -150,8 +176,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * Function will display recent date.
      */
-    private fun updateDate(lastData: CovidData) {
-        mBinding.tvDate.text = convertDateStringIntoString(lastData.Date)
+    private fun updateInfo(lastData: CovidData) {
+        updateDateAndNumbers(lastData)
     }
 
     /**
