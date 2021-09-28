@@ -14,11 +14,6 @@ import retrofit2.http.Query
 interface CovidTrackerService {
 
     @GET("country/{country_name}")
-    suspend fun getCovidDataByCountry(
-        @Path("country_name") countryName : String
-    ) : List<CovidData>?
-
-    @GET("country/{country_name}")
     suspend fun getAllCovidHistoricalData(
         @Path("country_name") countryName : String,
         @Query("from") fromDate : String,
@@ -27,4 +22,5 @@ interface CovidTrackerService {
 
     @GET("countries")
     suspend fun getCountries() : List<CountriesItem>
+
 }

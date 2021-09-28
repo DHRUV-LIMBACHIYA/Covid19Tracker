@@ -4,8 +4,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -24,10 +22,14 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     private var numOfCases: Int = 0
+
     var lastCovidData: CovidData? = null
+
     lateinit var mBinding: ActivityMainBinding
 
     private val mViewModel: CovidTrackerViewModel by viewModels()
+
+    private var countryName: String = ""
 
     @Inject
     lateinit var mCovidAdapter: CovidTrackerSparkAdapter
@@ -35,91 +37,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        // Assign appropriate color for spark view
-        mBinding.sparkview.lineColor = Color.YELLOW
+
+        mBinding.sparkAdapter = mCovidAdapter
+
         observeLiveData()
+
         eventListeners()
-    }
-
-    /**
-     * Function responsible for listening events.
-     */
-    private fun eventListeners() {
-        mBinding.rgMetricSelection.setOnCheckedChangeListener { radioGroup, id ->
-            var color: Int
-            mCovidAdapter.metric = when (id) {
-                R.id.rd_confirmed -> {
-                    numOfCases = lastCovidData?.Confirmed ?: 0
-                    color = Color.YELLOW
-                    Metric.CONFIRMED
-                }
-                R.id.rd_recoverd -> {
-                    numOfCases = lastCovidData?.Recovered ?: 0
-                    color = Color.GREEN
-                    Metric.RECOVERED
-                }
-                R.id.rd_deaths -> {
-                    numOfCases = lastCovidData?.Deaths ?: 0
-                    color = Color.RED
-                    Metric.DEATH
-                }
-                else -> {
-                    numOfCases = lastCovidData?.Confirmed ?: 0
-                    color = Color.GREEN
-                    Metric.RECOVERED
-                }
-            }
-
-            // Assign appropriate color for spark view
-            mBinding.sparkview.lineColor = color
-            // Format the covid numbers and display in ticker textview
-            mBinding.tickerViewNumbers.text = NumberFormat.getInstance().format(numOfCases)
-
-            mCovidAdapter.notifyDataSetChanged()
-        }
-
-        mBinding.rgTimeSelection.setOnCheckedChangeListener { radioGroup, id ->
-            when (id) {
-                R.id.rd_max -> updateCovidDataByTimeScale(TimeScale.MAX)
-                R.id.rd_one_month -> updateCovidDataByTimeScale(TimeScale.MONTH)
-                R.id.rd_one_week -> updateCovidDataByTimeScale(TimeScale.WEEK)
-                else -> TimeScale.MAX
-            }
-        }
-
-        mBinding.sparkview.isScrubEnabled = true
-        mBinding.sparkview.setScrubListener { item ->
-            if (item is CovidData) {
-                updateDateAndNumbers(item)
-            }
-        }
-    }
-
-
-    private fun updateDateAndNumbers(item: CovidData) {
-        val numCases = when (mCovidAdapter.metric) {
-            Metric.CONFIRMED -> item.Confirmed
-            Metric.RECOVERED -> item.Recovered
-            Metric.DEATH -> item.Deaths
-        }
-        mBinding.tickerViewNumbers.text = NumberFormat.getInstance().format(numCases)
-        mBinding.tvDate.text = convertDateStringIntoString(item.Date)
-    }
-
-    private fun updateCovidDataByTimeScale(timescale: TimeScale) {
-        when (timescale) {
-            TimeScale.MAX -> mViewModel.getCovidHistoricalDataFromRepo(mViewModel.observableCountryName.trimmed)
-            TimeScale.MONTH -> mViewModel.getCovidHistoricalDataFromRepo(
-                mViewModel.observableCountryName.trimmed,
-                fromDate = getDayAgo(30),
-                toDate = getCurrentDate()
-            )
-            TimeScale.WEEK -> mViewModel.getCovidHistoricalDataFromRepo(
-                mViewModel.observableCountryName.trimmed,
-                fromDate = getDayAgo(7),
-                toDate = getCurrentDate()
-            )
-        }
     }
 
     /**
@@ -140,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     hideProgressBar()
-                    showError(countryResource.message)
+                    showNoRecord()
                 }
             }
         }
@@ -159,16 +82,65 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Resource.Error -> {
                     hideProgressBar()
-                    showError(covidData.message)
+                    showNoRecord()
                 }
             }
         }
     }
 
-    private fun showError(message: String?) {
-        showNoRecord()
-        message?.let {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+    /**
+     * Function responsible for listening events.
+     */
+    private fun eventListeners() {
+        mBinding.rgMetricSelection.setOnCheckedChangeListener { radioGroup, id ->
+            val color: Int
+
+            // Update covid metric in adapter.
+            mCovidAdapter.metric = when (id) {
+                R.id.rd_confirmed -> {
+                    numOfCases = lastCovidData?.Confirmed ?: 0
+                    color = Color.YELLOW
+                    Metric.CONFIRMED
+                }
+                R.id.rd_recoverd -> {
+                    numOfCases = lastCovidData?.Recovered ?: 0
+                    color = Color.GREEN
+                    Metric.RECOVERED
+                }
+                R.id.rd_deaths -> {
+                    numOfCases = lastCovidData?.Deaths ?: 0
+                    color = Color.RED
+                    Metric.DEATH
+                }
+                else -> {
+                    numOfCases = lastCovidData?.Confirmed ?: 0
+                    color = Color.GREEN
+                    Metric.CONFIRMED
+                }
+            }
+
+            // Assign appropriate color for spark view
+            mBinding.sparkview.lineColor = color
+
+            // Format the covid numbers and display in ticker textview
+            mBinding.tickerViewNumbers.text = NumberFormat.getInstance().format(numOfCases)
+
+            mCovidAdapter.notifyDataSetChanged()
+        }
+
+        mBinding.rgTimeSelection.setOnCheckedChangeListener { radioGroup, id ->
+            when (id) {
+                R.id.rd_max -> updateTimeScale(TimeScale.MAX)
+                R.id.rd_one_month -> updateTimeScale(TimeScale.MONTH)
+                R.id.rd_one_week -> updateTimeScale(TimeScale.WEEK)
+                else -> TimeScale.MAX
+            }
+        }
+
+        mBinding.sparkview.setScrubListener { item ->
+            if (item is CovidData) {
+                updateDateAndNumbers(item)
+            }
         }
     }
 
@@ -176,9 +148,7 @@ class MainActivity : AppCompatActivity() {
      * Display a spark line using covid data.
      */
     private fun displaySparkLine(covidData: List<CovidData>?) {
-        mCovidAdapter.setCovidData(covidData!!.toMutableList())
-        mBinding.sparkview.adapter = mCovidAdapter
-        mCovidAdapter.notifyDataSetChanged()
+        mBinding.covidDataList = covidData!!
 
         if (covidData.isNotEmpty()) {
             lastCovidData = covidData.last() // Last(Recent) covid data.
@@ -186,7 +156,8 @@ class MainActivity : AppCompatActivity() {
                 updateInfo(it)
             }
         } else {
-            mBinding.tvDate.text =  resources.getString(R.string.text_no_record_found)
+            mBinding.tvDate.text = resources.getString(R.string.text_no_record_found)
+            mBinding.tickerViewNumbers.text = "0"
         }
     }
 
@@ -198,13 +169,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * Update Date and TickerView TextViews data according to Metric selected.
+     */
+    private fun updateDateAndNumbers(item: CovidData) {
+        val numCases = when (mCovidAdapter.metric) {
+            Metric.CONFIRMED -> item.Confirmed
+            Metric.RECOVERED -> item.Recovered
+            Metric.DEATH -> item.Deaths
+        }
+        mBinding.tickerViewNumbers.text = NumberFormat.getInstance().format(numCases)
+        mBinding.tvDate.text = convertDateStringIntoString(item.Date)
+    }
+
+    /**
+     * Method will update time scale value and call api method with selected time scale.
+     */
+    private fun updateTimeScale(timescale: TimeScale) {
+        when (timescale) {
+            TimeScale.MAX -> mViewModel.getCovidHistoricalDataFromRepo(countryName)
+            TimeScale.MONTH -> mViewModel.getCovidHistoricalDataFromRepo(
+                countryName,
+                fromDate = getDayAgo(30),
+                toDate = getCurrentDate()
+            )
+            TimeScale.WEEK -> mViewModel.getCovidHistoricalDataFromRepo(
+                countryName,
+                fromDate = getDayAgo(7),
+                toDate = getCurrentDate()
+            )
+        }
+    }
+
+    /**
      * Set data in spinner
      */
     private fun setDataSourceToSpinner(data: List<CountriesItem>) {
-        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, data)
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        mBinding.spinnerCountry.adapter = arrayAdapter
-
+        mBinding.countries = data
         mBinding.spinnerCountry.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -213,14 +213,11 @@ class MainActivity : AppCompatActivity() {
                     position: Int,
                     id: Long
                 ) {
-                    val currentCountry = data[position].Country // Currently selected country
-                    mViewModel.observableCountryName.set(currentCountry)
-                    mViewModel.getCovidHistoricalDataFromRepo(currentCountry)
+                    countryName = data[position].Country // Currently selected country
+                    mViewModel.getCovidHistoricalDataFromRepo(countryName)
                 }
 
-                override fun onNothingSelected(p0: AdapterView<*>?) {
-                    // NO OP
-                }
+                override fun onNothingSelected(p0: AdapterView<*>?) { /* NO OP */ }
             }
     }
 
@@ -244,6 +241,7 @@ class MainActivity : AppCompatActivity() {
     private fun hideNoRecord() {
         mBinding.tvNoRecordFound.isVisible = false
     }
+
     /**
      * It will clear all the previous data displayed in views.
      */

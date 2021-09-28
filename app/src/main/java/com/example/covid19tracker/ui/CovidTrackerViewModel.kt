@@ -25,9 +25,6 @@ class CovidTrackerViewModel @Inject constructor(
     private val covidTrackerRepository: CovidTrackerRepository
 ) : ViewModel() {
 
-    //country name observable for all api call.
-    val observableCountryName = ObservableString()
-
     // LiveData for holding resource of countries.
     private var _countriesResponse = MutableLiveData<Resource<List<CountriesItem>>>()
     val countriesResponse: LiveData<Resource<List<CountriesItem>>> = _countriesResponse

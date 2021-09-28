@@ -7,9 +7,27 @@
 
         <import type="android.view.View"/>
 
+        <import type="java.util.List"/>
+
+        <import type="com.example.covid19tracker.network.remote.response.CountriesItem"/>
+
+        <import type="com.example.covid19tracker.network.remote.response.CovidData"/>
+
         <variable
             name="viewModel"
             type="com.example.covid19tracker.ui.CovidTrackerViewModel" />
+
+        <variable
+            name="countries"
+            type="List&lt;CountriesItem&gt;" />
+
+        <variable
+            name="covidDataList"
+            type="List&lt;CovidData&gt;" />
+
+        <variable
+            name="sparkAdapter"
+            type="com.example.covid19tracker.ui.adapter.CovidTrackerSparkAdapter" />
 
     </data>
 
@@ -34,6 +52,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            app:setDataSource="@{countries}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_country"
             app:layout_constraintTop_toTopOf="parent" />
@@ -46,6 +65,7 @@
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_country">
 
             <RadioButton
@@ -76,6 +96,8 @@
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:background="@color/purple_200"
+            app:setAdapter="@{sparkAdapter}"
+            app:setData="@{covidDataList}"
             app:layout_constraintBottom_toTopOf="@id/rg_time_selection"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -153,7 +175,6 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -164,7 +185,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_no_record_found"
-            android:elevation="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
