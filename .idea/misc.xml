@@ -3,7 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/drawable-v24/drawable_radio_button_background.xml" value="0.28055555555555556" />
+        <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/drawable/drawable_button_checked_background.xml" value="0.28055555555555556" />
+        <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/drawable/drawable_button_unchecked_background.xml" value="0.28055555555555556" />
+        <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/drawable/drawable_spinner_background.xml" value="0.1527777777777778" />
         <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1527777777777778" />
+        <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1527777777777778" />
         <entry key="..\:/Android Projects/MVVM/Covid19Tracker/app/src/main/res/drawable/drawable_button_checked_background.xml" value="0.127" />
         <entry key="..\:/Android Projects/MVVM/Covid19Tracker/app/src/main/res/drawable/drawable_button_unchecked_background.xml" value="0.127" />
         <entry key="..\:/Android Projects/MVVM/Covid19Tracker/app/src/main/res/drawable/drawable_radio_background.xml" value="0.127" />
