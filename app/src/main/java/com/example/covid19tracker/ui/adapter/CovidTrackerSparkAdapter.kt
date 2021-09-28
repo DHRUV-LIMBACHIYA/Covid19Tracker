@@ -12,7 +12,7 @@ import com.robinhood.spark.SparkAdapter
 
 class CovidTrackerSparkAdapter() : SparkAdapter(){
 
-    var metric = Metric.RECOVERED
+    var metric = Metric.CONFIRMED
     var timeScale = TimeScale.MAX
 
     var data = mutableListOf<CovidData>()

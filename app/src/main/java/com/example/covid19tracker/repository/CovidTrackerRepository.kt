@@ -16,22 +16,6 @@ import javax.inject.Inject
 class CovidTrackerRepository @Inject constructor(
     private val covidAPI: CovidTrackerService
 ) {
-
-    /**
-     * Fetch Covid data by country name.
-     */
-    suspend fun getCovidDataByCountryFromApi(countryName: String): Resource<List<CovidData>> {
-        return try {
-            val response = covidAPI.getCovidDataByCountry(countryName)
-            response?.let {
-                return Resource.Success(it)
-            }
-            return Resource.Error("An unknown error occurred!")
-        } catch (e: Exception) {
-            Resource.Error(e.message.toString())
-        }
-    }
-
     /**
      * Fetch Covid data from a specific date.
      */
@@ -39,23 +23,10 @@ class CovidTrackerRepository @Inject constructor(
         countryName: String,
         from: String,
         to: String,
-    ): Resource<List<CovidData>> = try {
-        val response = covidAPI.getAllCovidHistoricalData(countryName, from, to)
-        response?.let {
-            return Resource.Success(it)
-        }
-        Resource.Error("An unknown error occurred!")
-    } catch (e: Exception) {
-        Resource.Error(e.message.toString())
-    }
+    ): List<CovidData>? = covidAPI.getAllCovidHistoricalData(countryName, from, to)
 
     /**
      * Fetch all the countries from the API.
      */
-    suspend fun getCountriesFromApi(): Resource<List<CountriesItem>> = try {
-        val response = covidAPI.getCountries()
-        Resource.Success(response)
-    } catch (e: Exception) {
-        Resource.Error(e.message.toString())
-    }
+    suspend fun getCountriesFromApi(): List<CountriesItem> = covidAPI.getCountries()
 }

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Projects/CovidTracker/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Android Projects/MVVM/Covid19Tracker/app/src/main/res/drawable/drawable_button_checked_background.xml" value="0.127" />
         <entry key="..\:/Android Projects/MVVM/Covid19Tracker/app/src/main/res/drawable/drawable_button_unchecked_background.xml" value="0.127" />
         <entry key="..\:/Android Projects/MVVM/Covid19Tracker/app/src/main/res/drawable/drawable_radio_background.xml" value="0.127" />

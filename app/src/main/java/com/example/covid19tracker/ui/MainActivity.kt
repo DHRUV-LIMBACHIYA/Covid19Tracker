@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.example.covid19tracker.R
 import com.example.covid19tracker.Utils.*
@@ -22,7 +24,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     private var numOfCases: Int = 0
-    lateinit var lastCovidData: CovidData
+    var lastCovidData: CovidData? = null
     lateinit var mBinding: ActivityMainBinding
 
     private val mViewModel: CovidTrackerViewModel by viewModels()
@@ -47,22 +49,22 @@ class MainActivity : AppCompatActivity() {
             var color: Int
             mCovidAdapter.metric = when (id) {
                 R.id.rd_confirmed -> {
-                    numOfCases = lastCovidData.Confirmed
+                    numOfCases = lastCovidData?.Confirmed ?: 0
                     color = Color.YELLOW
                     Metric.CONFIRMED
                 }
                 R.id.rd_recoverd -> {
-                    numOfCases = lastCovidData.Recovered
+                    numOfCases = lastCovidData?.Recovered ?: 0
                     color = Color.GREEN
                     Metric.RECOVERED
                 }
                 R.id.rd_deaths -> {
-                    numOfCases = lastCovidData.Deaths
+                    numOfCases = lastCovidData?.Deaths ?: 0
                     color = Color.RED
                     Metric.DEATH
                 }
                 else -> {
-                    numOfCases = lastCovidData.Confirmed
+                    numOfCases = lastCovidData?.Confirmed ?: 0
                     color = Color.GREEN
                     Metric.RECOVERED
                 }
@@ -124,18 +126,21 @@ class MainActivity : AppCompatActivity() {
      * Observe the changes in the LiveData.
      */
     private fun observeLiveData() {
-        mViewModel.countries.observe(this) { countryResource ->
+        mViewModel.countriesResponse.observe(this) { countryResource ->
             when (countryResource) {
                 is Resource.Success -> {
                     countryResource.data?.let {
                         setDataSourceToSpinner(countryResource.data.sortedBy { it.Country })
                     }
+                    hideProgressBar()
+                    hideNoRecord()
                 }
                 is Resource.Loading -> {
-                    // Todo : Show progressbar.
+                    showProgressBar()
                 }
                 is Resource.Error -> {
-                    // Todo : Show error.
+                    hideProgressBar()
+                    showError(countryResource.message)
                 }
             }
         }
@@ -146,14 +151,24 @@ class MainActivity : AppCompatActivity() {
                     covidData.data?.let {
                         displaySparkLine(covidData.data)
                     }
+                    hideProgressBar()
+                    hideNoRecord()
                 }
                 is Resource.Loading -> {
-                    // Todo : Show progressbar.
+                    showProgressBar()
                 }
                 is Resource.Error -> {
-                    // Todo : Show error.
+                    hideProgressBar()
+                    showError(covidData.message)
                 }
             }
+        }
+    }
+
+    private fun showError(message: String?) {
+        showNoRecord()
+        message?.let {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -167,9 +182,11 @@ class MainActivity : AppCompatActivity() {
 
         if (covidData.isNotEmpty()) {
             lastCovidData = covidData.last() // Last(Recent) covid data.
-            updateInfo(lastCovidData)
+            lastCovidData?.let {
+                updateInfo(it)
+            }
         } else {
-            mBinding.tvDate.text = "No record"
+            mBinding.tvDate.text =  resources.getString(R.string.text_no_record_found)
         }
     }
 
@@ -206,4 +223,35 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
+
+
+    /**
+     * Methods to show/hide progress bar & No Record TextView.
+     */
+    private fun showProgressBar() {
+        mBinding.progressBar.isVisible = true
+    }
+
+    private fun hideProgressBar() {
+        mBinding.progressBar.isVisible = false
+    }
+
+    private fun showNoRecord() {
+        clearExistingData()
+        mBinding.tvNoRecordFound.isVisible = true
+    }
+
+    private fun hideNoRecord() {
+        mBinding.tvNoRecordFound.isVisible = false
+    }
+    /**
+     * It will clear all the previous data displayed in views.
+     */
+    private fun clearExistingData() {
+        mCovidAdapter.setCovidData(mutableListOf())
+        mCovidAdapter.notifyDataSetChanged()
+        mBinding.tickerViewNumbers.text = "0"
+        mBinding.tvDate.text = resources.getString(R.string.text_no_record_found)
+    }
+
 }

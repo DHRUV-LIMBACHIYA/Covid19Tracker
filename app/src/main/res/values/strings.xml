@@ -7,4 +7,5 @@
     <string name="text_max">Max</string>
     <string name="text_one_month">1 Month</string>
     <string name="text_one_week">1 Week</string>
+    <string name="text_no_record_found">No Record Found!</string>
 </resources>
