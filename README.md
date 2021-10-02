@@ -8,6 +8,5 @@ Libraries used :
 * [Robinhood Ticker](https://github.com/robinhood/ticker)
 
 Resources :
-post
 - [FreeCodeCamp - YouTube](https://youtu.be/4gMDR69DB6A)
 - Free Covid-19 API : [https://api.covid19api.com/country/{country_name}](https://api.covid19api.com/country/India)
