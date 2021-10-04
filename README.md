@@ -9,12 +9,12 @@ A **Covid-19** 🦠 tracking app which track number of **_confirmed_** ✅, **_r
 <img src="https://user-images.githubusercontent.com/86999890/135721246-526a4794-29fe-4673-9cf5-3c180e9ed29b.jpeg" alt="Screenshot_1630504386" width="200"/>
 <img src="https://user-images.githubusercontent.com/86999890/135721247-55dfb3bf-8d6c-472d-8330-5114a4d76469.jpeg" alt="Screenshot_1630504386" width="200"/>
 
-Libraries used :
+📚 Libraries used :
 * [Retrofit](https://square.github.io/retrofit/)
 * [Dagger-Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
 * [Robinhood Spark](https://github.com/robinhood/spark)
 * [Robinhood Ticker](https://github.com/robinhood/ticker)
 
-Resources :
+🔗 Resources :
 - [FreeCodeCamp - YouTube](https://youtu.be/4gMDR69DB6A)
 - Free Covid-19 API : [https://api.covid19api.com/country/{country_name}](https://api.covid19api.com/country/India)
